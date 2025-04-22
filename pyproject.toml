@@ -1,0 +1,19 @@
+[project]
+name = "qdrift-pai"
+version = "0.1.0"
+description = ""
+authors = [
+    {name = "YutoMorohoshi",email = "u542400c@ecs.osaka-u.ac.jp"}
+]
+readme = "README.md"
+requires-python = ">=3.12"
+dependencies = [
+]
+
+[tool.poetry]
+packages = [{include = "qdrift_pai", from = "src"}]
+
+
+[build-system]
+requires = ["poetry-core>=2.0.0,<3.0.0"]
+build-backend = "poetry.core.masonry.api"
