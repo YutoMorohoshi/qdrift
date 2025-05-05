@@ -14,6 +14,7 @@ class Qdrift:
     Attributes:
         hamil (SparsePauliOp): Hamiltonian.
         t (float): evolution time.
+        seed (int): Random seed.
         nstep (int): Number of steps.
     """
 
@@ -51,13 +52,24 @@ class Qdrift:
         rng = np.random.default_rng(self.seed)
         circ = QuantumCircuit(self.hamil.num_qubits, 1)
 
+        # Sample Pauli terms based on the probabilities
         sampled_pauli_terms = rng.choice(
             self.hamil.to_list(), size=self.nstep, p=self.probs
         )
-        # print(f"Sampled Pauli terms: \n{sampled_pauli_terms}")
         for pauli in sampled_pauli_terms:
-            op = SparsePauliOp(pauli[0], coeffs=pauli[1])
-            # print(f"op: {op}")
+            # op = SparsePauliOp(pauli[0], coeffs=pauli[1])
+            # print(f"pauli: {pauli}")
+            # print(f"type(pauli[1]): {type(pauli[1])}")
+            # op = SparsePauliOp(pauli[0], coeffs=self.lambd * np.sign(pauli[1]))
+
+            # pauli[1] は numpy.str_ 型であるため、complex に変換
+            coeff = complex(pauli[1])
+
+            # 符号を取得
+            coeff_sign = np.sign(coeff.real)
+
+            # サンプリングされた Pauli 演算子
+            op = SparsePauliOp(pauli[0], coeffs=self.lambd * coeff_sign)
 
             # Create a PauliEvolutionGate for each sampled Pauli term
             pauli_gate = PauliEvolutionGate(op, time=self.t / self.nstep)

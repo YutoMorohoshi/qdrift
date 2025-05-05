@@ -1,25 +1,28 @@
 """Script to compile circuits for Qdrift."""
 
-from lib.tool_box import validate_args, get_backend, get_save_dir
+from lib.tool_box import args_parse, get_backend, get_save_dir
 import os
 import sys
 import configparser
 import json
 import multiprocessing as mp
 import time
+import argparse
 from qiskit.compiler import transpile
 from qiskit.qasm3 import dump, load
 
 
-def transpile_circuits(index, backend, save_dir):
+def transpile_circuits(index, backend, end_path):
     """Compile circuits for Qdrift.
     Args:
         index (int): Circuit index.
         backend (Backend): Backend to compile the circuit.
+        seed (int): Random seed for circuit preparation.
         save_dir (str): Directory to save the compiled circuits.
     """
+
     # トランスパイル前の回路を読み込み
-    circ = load(f"{save_dir}/circuit{index}.qasm")
+    circ = load(f"{end_path}/circuit{index}.qasm")
     # カスタムゲート (PauliEvolutionGate) をデフォルトの基礎ゲートに展開
     circ = circ.decompose()
 
@@ -27,10 +30,10 @@ def transpile_circuits(index, backend, save_dir):
     print(f"transpiling circuit {index}...")
 
     # トランスパイル後の回路図を保存
-    isa_circ.draw("mpl", fold=-1, filename=f"{save_dir}/transpiled_circuit{index}.pdf")
+    isa_circ.draw("mpl", fold=-1, filename=f"{end_path}/transpiled_circuit{index}.pdf")
 
     # トランスパイル後の回路を QASM 形式で保存
-    with open(f"{save_dir}/transpiled_circuit{index}.qasm", "w") as f:
+    with open(f"{end_path}/transpiled_circuit{index}.qasm", "w") as f:
         dump(isa_circ, f)
 
 
@@ -40,22 +43,23 @@ def transpile_circuits_wrapper(args):
 
 
 if __name__ == "__main__":
-    args = sys.argv
-    # コマンドライン引数の確認
-    validate_args(args)
-    mode = args[1]
+    # コマンドライン引数の解析
+    parser = argparse.ArgumentParser(description="Compile circuits for Qdrift.")
+    mode, seed, num_steps = args_parse(parser)
 
     # 設定ファイル (config.ini) の読み込み
     config = configparser.ConfigParser()
     config.read("qdrift_pai/config.ini")
+    num_times = json.loads(config["DEFAULT"]["num_times"])
 
     # 保存先ディレクトリの取得
     save_dir = get_save_dir(config, mode)
 
-    if not os.path.exists(save_dir):
-        os.makedirs(save_dir)
+    # 回路の保存先となる末端のパス
+    end_path = f"{save_dir}/num_steps{num_steps}/seed{seed}"
 
-    num_times = json.loads(config["DEFAULT"]["num_times"])
+    # ディレクトリが存在していなくても作成
+    os.makedirs(end_path, exist_ok=True)
 
     # バックエンドの設定
     start = time.time()
@@ -69,7 +73,7 @@ if __name__ == "__main__":
         # Compile circuits in parallel
         p.map(
             transpile_circuits_wrapper,
-            [(i, backend, save_dir) for i in range(num_times)],
+            [(i, backend, end_path) for i in range(num_times)],
         )
     end = time.time()
-    print(f"Elapsed time to transpile circuits: {(end - start):.2f} sec")
+    print(f"Elapsed time to transpile {num_times} circuits: {(end - start):.2f} sec")

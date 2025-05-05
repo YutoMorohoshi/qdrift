@@ -14,6 +14,7 @@ dependencies = [
     "qiskit-ibm-runtime (>=0.38.0,<0.39.0)",
     "qiskit-aer (>=0.17.0,<0.18.0)",
     "qiskit-qasm3-import (>=0.5.1,<0.6.0)",
+    "numba (>=0.61.2,<0.62.0)",
 ]
 
 

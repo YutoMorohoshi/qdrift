@@ -1,4 +1,4 @@
-from lib.tool_box import validate_args, get_hamil, get_save_dir, measure_zexp_exact
+from lib.tool_box import get_hamil, get_save_dir, measure_zexp_exact
 from lib.qdrift import Qdrift
 import matplotlib
 import matplotlib.pyplot as plt
@@ -18,8 +18,8 @@ if __name__ == "__main__":
     # 保存先ディレクトリの取得
     save_dir = get_save_dir(config, "EXACT")
 
-    if not os.path.exists(save_dir):
-        os.makedirs(save_dir)
+    # ディレクトリが存在していなくても作成
+    os.makedirs(save_dir, exist_ok=True)
 
     nqubits = json.loads(config["DEFAULT"]["nqubits"])
     Jx = json.loads(config["DEFAULT"]["Jx"])
@@ -38,9 +38,3 @@ if __name__ == "__main__":
     # save results
     with open(f"{save_dir}/result.json", "w") as f:
         json.dump(dict(Z_exps=Z_exps), f, indent=4)
-
-    # # plot
-    # plt.plot(times, Z_exps, marker="o", linestyle="-")
-    # plt.xlabel("Time")
-    # plt.ylabel(r"$\langle$ Z $\rangle$")
-    # plt.savefig(f"{save_dir}/prob_0s.pdf")

@@ -5,26 +5,72 @@ from qiskit_aer import AerSimulator
 from qiskit.providers.fake_provider import GenericBackendV2
 from qiskit_ibm_runtime import QiskitRuntimeService
 from typing import Union
+import numpy as np
+from scipy.sparse.linalg import expm_multiply
 import time
+import argparse
 
 
-def validate_args(args) -> None:
+def valid_num_steps(val: str) -> int:
     """
-    コマンドライン引数の検証を行う関数。
-    引数が正しい形式であるかを確認し、エラーがあればメッセージを表示して終了します。
-
-    Args:
-        args (list): コマンドライン引数のリスト。
+    num_steps に使う整数のバリデーション（1〜1000の間）
 
     Raises:
-        ValueError: 引数が不正な場合に発生します。
+        argparse.ArgumentTypeError: 範囲外の値が与えられた場合。
     """
-    if len(args) != 2:
-        raise ValueError(
-            'Too few arguments. Usage: python qdrift_pai/prepare_circuits.py <"QDRIFT" or "QDRIFT_PAI">'
+    ivalue = int(val)
+    if not (1 <= ivalue <= 1000):
+        raise argparse.ArgumentTypeError(
+            f"num_steps must be in [1, 1000], got {ivalue}"
         )
-    if args[1] not in ["QDRIFT", "QDRIFT_PAI"]:
-        raise ValueError('Invalid arguments. arg1 must be "QDRIFT" or "QDRIFT_PAI".')
+    return ivalue
+
+
+def args_parse(parser) -> tuple:
+    """
+    コマンドライン引数を解析する関数。
+
+    Returns:
+        tuple: (mode, seeds, num_steps_list)
+    """
+    parser.add_argument(
+        "mode",
+        type=str,
+        help="Mode to prepare circuits (e.g., 'QDRIFT', 'EXACT').",
+        choices=["QDRIFT", "EXACT"],
+    )
+    parser.add_argument(
+        "--seeds",
+        type=int,
+        nargs="+",
+        required=True,
+        help="List of random seeds for circuit preparation.",
+    )
+    parser.add_argument(
+        "--num_steps",
+        type=valid_num_steps,
+        nargs="+",
+        required=True,
+        help="List of number of steps (each must be in [1, 1000]).",
+    )
+
+    args = parser.parse_args()
+
+    # seed が1つの場合 (prepare_circuits.py, transpiled_circuit.py, run_circuits.py)
+    if len(args.seeds) == 1:
+        seeds = args.seeds[0]
+    # seed が配列の場合 (plot_results.py)
+    else:
+        seeds = args.seeds
+
+    # num_steps が 1 つの場合 (prepare_circuits.py, transpiled_circuit.py, run_circuits.py)、その 1
+    if len(args.num_steps) == 1:
+        num_steps = args.num_steps[0]
+    # num_steps が配列の場合 (plot_results.py)、配列を返す
+    else:
+        num_steps = args.num_steps
+
+    return args.mode, seeds, num_steps
 
 
 def get_save_dir(config: configparser.ConfigParser, mode: str) -> str:
@@ -147,10 +193,6 @@ def get_hamil(
     return H
 
 
-import numpy as np
-from scipy.sparse.linalg import expm_multiply
-
-
 def measure_zexp_exact(
     nqubits: int,
     H: SparsePauliOp,
@@ -171,8 +213,7 @@ def measure_zexp_exact(
     H_mat = H.to_matrix(sparse=True)
 
     # 初期状態 |0...0> を作成
-    dim = 2**nqubits
-    psi0 = np.zeros(dim, dtype=complex)
+    psi0 = np.zeros(2**nqubits, dtype=complex)
     psi0[0] = 1.0
 
     # 状態ベクトルを時間発展
