@@ -4,26 +4,26 @@ gate rxx(_gate_p_0) _gate_q_0, _gate_q_1 {
   h _gate_q_0;
   h _gate_q_1;
   cx _gate_q_0, _gate_q_1;
-  rz(0.99) _gate_q_1;
+  rz(1.98) _gate_q_1;
   cx _gate_q_0, _gate_q_1;
   h _gate_q_1;
   h _gate_q_0;
 }
 gate rzz(_gate_p_0) _gate_q_0, _gate_q_1 {
   cx _gate_q_0, _gate_q_1;
-  rz(0.99) _gate_q_1;
+  rz(1.98) _gate_q_1;
   cx _gate_q_0, _gate_q_1;
 }
 bit[1] c;
 qubit[4] q;
-rxx(0.99) q[2], q[3];
-rzz(0.99) q[1], q[2];
-rxx(0.99) q[0], q[1];
-rxx(0.99) q[0], q[1];
-rzz(0.99) q[0], q[1];
-rzz(0.99) q[0], q[1];
-rxx(0.99) q[2], q[3];
-rzz(0.99) q[2], q[3];
-rxx(0.99) q[2], q[3];
-rzz(0.99) q[2], q[3];
+rxx(1.98) q[2], q[3];
+rzz(1.98) q[1], q[2];
+rxx(1.98) q[0], q[1];
+rxx(1.98) q[0], q[1];
+rzz(1.98) q[0], q[1];
+rzz(1.98) q[0], q[1];
+rxx(1.98) q[2], q[3];
+rzz(1.98) q[2], q[3];
+rxx(1.98) q[2], q[3];
+rzz(1.98) q[2], q[3];
 c[0] = measure q[0];

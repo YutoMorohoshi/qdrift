@@ -57,11 +57,6 @@ class Qdrift:
             self.hamil.to_list(), size=self.nstep, p=self.probs
         )
         for pauli in sampled_pauli_terms:
-            # op = SparsePauliOp(pauli[0], coeffs=pauli[1])
-            # print(f"pauli: {pauli}")
-            # print(f"type(pauli[1]): {type(pauli[1])}")
-            # op = SparsePauliOp(pauli[0], coeffs=self.lambd * np.sign(pauli[1]))
-
             # pauli[1] は numpy.str_ 型であるため、complex に変換
             coeff = complex(pauli[1])
 

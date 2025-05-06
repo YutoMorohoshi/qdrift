@@ -7,6 +7,7 @@ from qiskit_ibm_runtime import QiskitRuntimeService
 from typing import Union
 import numpy as np
 from scipy.sparse.linalg import expm_multiply
+from scipy.linalg import expm
 import time
 import argparse
 
@@ -210,20 +211,17 @@ def measure_zexp_exact(
     Returns:
         float: qubit 0 の Z 期待値
     """
-    H_mat = H.to_matrix(sparse=True)
+    # H_mat = H.to_matrix(sparse=True)
 
     # 初期状態 |0...0> を作成
     psi0 = np.zeros(2**nqubits, dtype=complex)
     psi0[0] = 1.0
 
     # 状態ベクトルを時間発展
-    psi_t = expm_multiply(-1j * H_mat * t, psi0)
+    # psi_t = expm_multiply(-1j * H_mat * t, psi0)
+    # psi_t = expm(-1j * H_mat.toarray() * t) @ psi0
+    psi_t = expm(-1j * H.to_matrix(sparse=False) * t) @ psi0
+    Z = np.array([[1, 0], [0, -1]])
+    Z0 = np.kron(Z, np.eye(2 ** (nqubits - 1)))
 
-    # qubit 0 の測定確率を計算
-    prob_0 = np.abs(psi_t[0]) ** 2
-    prob_1 = 1 - prob_0
-
-    # qubits 0 の Z 期待値を計算
-    z_exp = prob_0 * 1 + prob_1 * (-1)
-
-    return z_exp
+    return np.real(np.vdot(psi_t, Z0 @ psi_t))

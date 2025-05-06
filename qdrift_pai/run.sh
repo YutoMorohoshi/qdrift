@@ -1,12 +1,14 @@
 #!/bin/bash
 
+start=$(date +%s)
+
 # Exact calculation
 python qdrift_pai/exact_calc.py
 
 nums_steps=(10 100 1000)
 
 # 作成するシードの数
-num_seeds=10
+num_seeds=5
 # シードを作るためのシード
 RANDOM=42
 
@@ -28,3 +30,6 @@ done
 
 # Plot results
 python qdrift_pai/plot_results.py QDRIFT --seeds "${seeds[@]}" --num_steps "${nums_steps[@]}"
+
+end=$(date +%s)
+echo "Elapsed time: $((end - start)) seconds"

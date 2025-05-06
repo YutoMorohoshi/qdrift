@@ -10,7 +10,7 @@ gate rxx(p0) _gate_q_0, _gate_q_1 {
   h _gate_q_0;
 }
 gate PauliEvolution(_gate_p_0) _gate_q_0, _gate_q_1, _gate_q_2, _gate_q_3 {
-  rxx(1.8900000000000001) _gate_q_2, _gate_q_3;
+  rxx(3.7800000000000002) _gate_q_2, _gate_q_3;
 }
 gate rzz(p0) _gate_q_0, _gate_q_1 {
   cx _gate_q_0, _gate_q_1;
@@ -18,25 +18,25 @@ gate rzz(p0) _gate_q_0, _gate_q_1 {
   cx _gate_q_0, _gate_q_1;
 }
 gate PauliEvolution_0(_gate_p_0) _gate_q_0, _gate_q_1, _gate_q_2, _gate_q_3 {
-  rzz(1.8900000000000001) _gate_q_1, _gate_q_2;
+  rzz(3.7800000000000002) _gate_q_1, _gate_q_2;
 }
 gate PauliEvolution_1(_gate_p_0) _gate_q_0, _gate_q_1, _gate_q_2, _gate_q_3 {
-  rzz(1.8900000000000001) _gate_q_2, _gate_q_3;
+  rzz(3.7800000000000002) _gate_q_2, _gate_q_3;
 }
 gate PauliEvolution_2(_gate_p_0) _gate_q_0, _gate_q_1, _gate_q_2, _gate_q_3 {
-  rxx(1.8900000000000001) _gate_q_0, _gate_q_1;
+  rxx(3.7800000000000002) _gate_q_0, _gate_q_1;
 }
 gate PauliEvolution_3(_gate_p_0) _gate_q_0, _gate_q_1, _gate_q_2, _gate_q_3 {
-  rzz(1.8900000000000001) _gate_q_2, _gate_q_3;
+  rzz(3.7800000000000002) _gate_q_2, _gate_q_3;
 }
 gate PauliEvolution_4(_gate_p_0) _gate_q_0, _gate_q_1, _gate_q_2, _gate_q_3 {
-  rxx(1.8900000000000001) _gate_q_0, _gate_q_1;
+  rxx(3.7800000000000002) _gate_q_0, _gate_q_1;
 }
 gate PauliEvolution_5(_gate_p_0) _gate_q_0, _gate_q_1, _gate_q_2, _gate_q_3 {
-  rzz(1.8900000000000001) _gate_q_0, _gate_q_1;
+  rzz(3.7800000000000002) _gate_q_0, _gate_q_1;
 }
 gate PauliEvolution_6(_gate_p_0) _gate_q_0, _gate_q_1, _gate_q_2, _gate_q_3 {
-  rzz(1.8900000000000001) _gate_q_0, _gate_q_1;
+  rzz(3.7800000000000002) _gate_q_0, _gate_q_1;
 }
 bit[1] c;
 qubit[4] q;

@@ -74,6 +74,6 @@ if __name__ == "__main__":
     )
 
     plt.xlabel("Time")
-    plt.ylabel(r"$\langle$ Z $\rangle$")
+    plt.ylabel(r"$\langle Z_0 \rangle$")
     plt.legend()
-    plt.savefig(f"{save_dir}/times_vs_Zexp.pdf")
+    plt.savefig(f"{save_dir}/times_vs_Z0.pdf")
