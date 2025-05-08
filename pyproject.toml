@@ -1,5 +1,5 @@
 [project]
-name = "qdrift-pai"
+name = "qdrift"
 version = "0.1.0"
 description = ""
 authors = [
